@@ -633,6 +633,6 @@
         (async () => {
             appendMessage('Hi! I am Rod The Pug — your friendly furry companion. I can do many things, including telling jokes, sharing fun facts, and even helping with 3rd grade math homework!', 'bot', 'Rod The Pug');
         })();
-    </script>a
+    </script>
 </body>
 </html>
