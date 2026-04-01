@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Desert Wildfires Social</title>
+    <style>
+        :root{
+            --bg:#2e2e2e; --card:#c4c4c4; --accent:#ff4d4d; --muted:#8f5050; --glass: rgba(255, 255, 255, 0.03);
+            --radius:12px; font-family: Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+        }
+        html,body{height:100%; margin:0; background:linear-gradient(180deg,#ffffff 0%, #ff4d00 100%); color:#000000}
+        .app{max-width:900px;margin:32px auto;padding:24px;border-radius:16px;background:linear-gradient(180deg,rgba(255,77,77,0.04),transparent); box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+        header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+        .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#ff7a00,#ff0044);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;box-shadow:0 6px 18px rgba(255,64,64,0.12)}
+        h1{font-size:20px;margin:0}
+        p.lead{margin:0;color:var(--muted); font-size:13px}
+        .composer{display:grid;grid-template-columns:1fr 140px;gap:12px;margin-top:16px}
+        .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 4px 18px rgba(0,0,0,0.6)}
+        label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+        input[type="text"], textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;resize:vertical}
+        textarea{min-height:92px}
+        .controls{display:flex;flex-direction:column;height:100%;gap:8px;justify-content:space-between}
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#ff7a7a);color:#fff;font-weight:600;cursor:pointer}
+        .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+        .preview{margin-top:8px;border-radius:10px;overflow:hidden;background:var(--glass);padding:8px}
+        .posts{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+        .post{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:linear-gradient(180deg,#111,#0e0e0e);box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+        .avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#ff7a00,#ff0044);display:flex;align-items:center;justify-content:center;font-weight:800}
+        .content{flex:1}
+        .meta{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:6px}
+        .text{white-space:pre-wrap;margin-bottom:8px}
+        .post img{max-width:100%;border-radius:10px;margin-top:8px;background:#000}
+        .post-actions{display:flex;gap:8px;margin-top:8px}
+        .small{font-size:13px;padding:6px 8px;border-radius:8px}
+        .like{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);cursor:pointer}
+        .delete{background:rgba(255,20,20,0.12);border:1px solid rgba(255,20,20,0.18);color:#ffbdbd}
+        .empty{color:var(--muted);text-align:center;padding:20px}
+        footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+        @media(max-width:720px){.composer{grid-template-columns:1fr;}.logo{width:48px;height:48px}}
+    </style>
+</head>
+<body>
+    <main class="app" id="app">
+        <header>
+            <div class="logo">DW Social</div>
+            <div>
+                <h1>Desert Wildfires Social</h1>
+                <p class="lead">Post text and optionally an image URL.</p>
+            </div>
+        </header>
+
+        <section class="composer card" aria-labelledby="composer-title">
+            <div>
+                <label for="author">Name</label>
+                <input id="author" type="text" placeholder="Your name (optional)" maxlength="40">
+
+                <label for="text" style="margin-top:10px">What's on fire?</label>
+                <textarea id="text" placeholder="Write something..." maxlength="1000"></textarea>
+
+                <label for="img" style="margin-top:10px">Image URL (optional)</label>
+                <input id="img" type="text" placeholder="https://example.com/image.jpg">
+
+                <div class="preview" id="preview" style="display:none">
+                    <div style="font-size:13px;color:var(--muted)">Preview</div>
+                    <div id="previewText" style="margin-top:6px"></div>
+                    <img id="previewImg" alt="preview" style="display:block;margin-top:8px;max-height:220px;object-fit:cover;width:100%">
+                </div>
+            </div>
+
+            <div class="controls">
+                <div>
+                    <button id="postBtn" class="btn" aria-label="Post">Post</button>
+                    <button id="clearBtn" class="btn secondary" style="margin-left:8px">Clear</button>
+                </div>
+                <div style="text-align:center;color:var(--muted);font-size:13px">No account needed</div>
+            </div>
+        </section>
+
+        <section class="posts" id="postsList" aria-live="polite">
+            <!-- posts injected here -->
+        </section>
+
+        <footer>This is Desert Wildfires Social</footer>
+    </main>
+
+    <script>
+        // Simple Fire Kid Social - single-file app using localStorage
+        const LS_KEY = 'fire_kid_social_posts_v1';
+        const authorEl = document.getElementById('author');
+        const textEl = document.getElementById('text');
+        const imgEl = document.getElementById('img');
+        const postBtn = document.getElementById('postBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const postsList = document.getElementById('postsList');
+        const preview = document.getElementById('preview');
+        const previewText = document.getElementById('previewText');
+        const previewImg = document.getElementById('previewImg');
+
+        function readPosts(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e){ return [] } }
+        function writePosts(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+        function renderPosts(){
+            const posts = readPosts().slice().reverse();
+            postsList.innerHTML = '';
+            if(!posts.length){ postsList.innerHTML = '<div class="empty card">No posts yet — be the first!</div>'; return }
+            posts.forEach(p => {
+                const el = document.createElement('article');
+                el.className = 'post card';
+                el.innerHTML = `
+                    <div class="avatar" title="${escapeHtml(p.author||'Desert Wildfires')}">${escapeInitials(p.author)}</div>
+                    <div class="content">
+                        <div class="meta">
+                            <strong>${escapeHtml(p.author || 'Desert Wildfires')}</strong>
+                            <span>•</span>
+                            <span>${timeAgo(p.createdAt)}</span>
+                        </div>
+                        <div class="text">${escapeHtml(p.text)}</div>
+                        ${p.image ? `<img src="${escapeAttr(p.image)}" alt="post image" onerror="this.style.display='none'">` : ''}
+                        <div class="post-actions">
+                            <button class="small like" data-id="${p.id}">👍 ${p.likes || 0}</button>
+                            <button class="small delete" data-id="${p.id}">Delete</button>
+                        </div>
+                    </div>
+                `;
+                postsList.appendChild(el);
+            });
+        }
+
+        function createPost(author, text, image){
+            const posts = readPosts();
+            const post = { id: Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7), author: author?.trim(), text: text?.trim(), image: image?.trim(), createdAt: Date.now(), likes: 0 };
+            posts.push(post);
+            writePosts(posts);
+            renderPosts();
+        }
+
+        function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[s]); }
+        function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
+        function escapeInitials(name){ if(!name) return 'FK'; return name.split(/\s+/).map(s=>s[0]).slice(0,2).join('').toUpperCase(); }
+
+        function timeAgo(ts){
+            const diff = Math.floor((Date.now()-ts)/1000);
+            if(diff<60) return `${diff}s ago`;
+            if(diff<3600) return `${Math.floor(diff/60)}m ago`;
+            if(diff<86400) return `${Math.floor(diff/3600)}h ago`;
+            return new Date(ts).toLocaleString();
+        }
+
+        // Handle post / clear
+        postBtn.addEventListener('click', ()=>{
+            const author = authorEl.value;
+            const text = textEl.value;
+            const image = imgEl.value;
+            if(!text.trim() && !image.trim()){
+                alert('Provide text or an image URL to post.');
+                return;
+            }
+            createPost(author, text, image);
+            textEl.value = '';
+            imgEl.value = '';
+            preview.style.display = 'none';
+        });
+
+        clearBtn.addEventListener('click', ()=>{
+            if(!confirm('Clear composer fields?')) return;
+            authorEl.value = '';
+            textEl.value = '';
+            imgEl.value = '';
+            preview.style.display = 'none';
+        });
+
+        // Live preview of composer
+        function updatePreview(){
+            const t = textEl.value.trim();
+            const img = imgEl.value.trim();
+            previewText.innerText = t || (img ? '[Image only]' : '');
+            if(img){
+                previewImg.src = img;
+                previewImg.style.display = 'block';
+                previewImg.onerror = ()=>{ previewImg.style.display='none'; }
+            } else {
+                previewImg.style.display = 'none';
+            }
+            preview.style.display = (t || img) ? 'block' : 'none';
+        }
+        textEl.addEventListener('input', updatePreview);
+        imgEl.addEventListener('input', updatePreview);
+
+        // Delegated actions: like & delete
+        postsList.addEventListener('click', (e)=>{
+            const likeBtn = e.target.closest('.like');
+            const loveBtn = e.target.closest('.love');
+            const fireBtn = e.target.closest('.fire');
+            const delBtn = e.target.closest('.delete');
+            if(likeBtn){
+                const id = likeBtn.dataset.id;
+                const posts = readPosts();
+                const p = posts.find(x=>x.id===id);
+                if(p){ p.likes = (p.likes||0) + 1; writePosts(posts); renderPosts(); }
+            } else if(loveBtn){
+                const id = loveBtn.dataset.id;
+                const posts = readPosts();
+                const p = posts.find(x=>x.id===id);
+                if(p){ p.likes = (p.likes||0) + 1; writePosts(posts); renderPosts(); }
+            } else if(fireBtn){
+                const id = fireBtn.dataset.id;
+                const posts = readPosts();
+                const p = posts.find(x=>x.id===id);
+                if(p){ p.likes = (p.likes||0) + 1; writePosts(posts); renderPosts(); }
+            } else if(delBtn){
+                const id = delBtn.dataset.id;
+                if(!confirm('Delete this post?')) return;
+                const posts = readPosts().filter(x=>x.id!==id);
+                writePosts(posts);
+                renderPosts();
+            }
+        });
+
+        // Init
+        renderPosts();
+    </script>
+</body>
+</html>
