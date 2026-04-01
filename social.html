@@ -43,20 +43,20 @@
 <body>
     <main class="app" id="app">
         <header>
-            <div class="logo">FK</div>
+            <div class="logo">Fire Kid</div>
             <div>
                 <h1>Fire Kid Social</h1>
-                <p class="lead">Post text and an image URL. Posts are saved locally in your browser.</p>
+                <p class="lead">Post text and an image URL.</p>
             </div>
         </header>
 
         <section class="composer card" aria-labelledby="composer-title">
             <div>
-                <label for="author">Name</label>
-                <input id="author" type="text" placeholder="Your name (optional)" maxlength="40">
+                <label for="author">Name (optional)</label>
+                <input id="author" type="text" placeholder="Your name" maxlength="30">
 
                 <label for="text" style="margin-top:10px">What's on fire?</label>
-                <textarea id="text" placeholder="Write something..." maxlength="1000"></textarea>
+                <textarea id="text" placeholder="Write your post..." maxlength="1000"></textarea>
 
                 <label for="img" style="margin-top:10px">Image URL (optional)</label>
                 <input id="img" type="text" placeholder="https://example.com/image.jpg">
@@ -73,7 +73,7 @@
                     <button id="postBtn" class="btn" aria-label="Post">Post</button>
                     <button id="clearBtn" class="btn secondary" style="margin-left:8px">Clear</button>
                 </div>
-                <div style="text-align:center;color:var(--muted);font-size:13px">Local demo • No account needed</div>
+                <div style="text-align:center;color:var(--muted);font-size:13px">No account needed to post.</div>
             </div>
         </section>
 
@@ -81,7 +81,7 @@
             <!-- posts injected here -->
         </section>
 
-        <footer>Built as Fire Kid Social — posts stored in localStorage</footer>
+        <footer>© 2026 Rodsay. All rights reserved.</footer>
     </main>
 
     <script>
