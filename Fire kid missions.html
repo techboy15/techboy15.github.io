@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mission Flames</title>
+<style>
+    :root{
+        --bg1:#330000;
+        --bg2:#9a0b0b;
+        --bg3:#ff4d4d;
+    }
+    html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#fff}
+    body{
+        background: linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 40%, var(--bg3) 100%);
+        overflow:hidden;
+        position:relative;
+    }
+
+    /* Flames container */
+    .flames{
+        position:fixed;
+        left:0;right:0;bottom:0;height:45vh;
+        pointer-events:none;
+        overflow:hidden;
+        mix-blend-mode:screen;
+    }
+
+    .flame{
+        position:absolute;
+        bottom:-10%;
+        width:60px;
+        height:80px;
+        transform-origin:center bottom;
+        opacity:0;
+        filter:blur(.6px) drop-shadow(0 6px 20px rgba(255,50,0,.35));
+        will-change:transform,opacity,filter;
+        animation-name:rise,flicker;
+        animation-iteration-count:infinite;
+        animation-timing-function:linear;
+    }
+
+    .flame .core{
+        position:absolute;
+        left:50%;top:50%;
+        transform:translate(-50%,-50%) rotate(-10deg);
+        width:100%;height:100%;
+        background: radial-gradient(circle at 50% 35%, #ffd86b 0 10%, #ff8a00 20%, #ff3b00 45%, rgba(255,0,0,0) 60%);
+        border-radius:50% 50% 40% 60% / 60% 60% 40% 40%;
+        box-shadow:0 0 30px rgba(255,120,0,0.6), inset 0 -10px 20px rgba(255,0,0,0.15);
+    }
+
+    .flame::before{
+        content:"";
+        position:absolute;inset:-10% -15%;
+        background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.9) 0 6%, rgba(255,255,255,0.06) 8%, rgba(255,60,0,0.18) 25%, rgba(255,0,0,0) 60%);
+        border-radius:50% 50% 40% 60% / 70% 60% 40% 40%;
+        mix-blend-mode:screen;
+        filter:blur(6px);
+        opacity:.85;
+    }
+
+    @keyframes rise{
+        0%{transform:translateY(0) scale(0.8); opacity:0; filter: blur(2px);}
+        10%{opacity:1}
+        50%{transform:translateY(-35vh) scale(1.05)}
+        90%{opacity:.6}
+        100%{transform:translateY(-60vh) scale(1.2); opacity:0; filter: blur(8px);}
+    }
+
+    @keyframes flicker{
+        0%{transform:rotate(-6deg) scaleX(1) scaleY(1)}
+        25%{transform:rotate(4deg) scaleX(1.08) scaleY(.98)}
+        50%{transform:rotate(-8deg) scaleX(.96) scaleY(1.03)}
+        75%{transform:rotate(3deg) scaleX(1.04) scaleY(.97)}
+        100%{transform:rotate(-6deg) scaleX(1) scaleY(1)}
+    }
+
+    /* Controls */
+    .controls{
+        position:fixed;
+        top:20px;left:20px;z-index:40;
+    }
+    .site-title{margin:0 0 8px 0;font-size:18px;color:#fff;font-weight:700}
+    .btn{
+        background:rgba(0,0,0,0.35);
+        color:#fff;border:1px solid rgba(255,255,255,0.12);
+        padding:12px 18px;border-radius:8px;font-weight:600;
+        cursor:pointer;backdrop-filter:blur(6px);text-decoration:none;display:inline-block;
+    }
+    .btn:active{transform:translateY(1px)}
+
+    /* Modal/dialog */
+    .modal-backdrop{
+        position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
+        display:flex;align-items:center;justify-content:center;z-index:50;
+    }
+    .dialog{
+        background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+        border:1px solid rgba(255,255,255,0.08);
+        padding:22px;border-radius:12px;max-width:460px;width:92%;
+        box-shadow:0 10px 40px rgba(0,0,0,0.6);
+    }
+    .dialog h2{margin:0 0 10px 0;font-size:18px}
+    .dialog p{margin:0 0 16px 0;line-height:1.4;color:#ffd9d9}
+    .dialog .ok{float:right}
+    .hidden{display:none}
+    @media (max-width:480px){
+        .flame{width:40px;height:60px}
+    }
+</style>
+</head>
+<body>
+    <div class="controls">
+        <h1 class="site-title">Fire Kid Website</h1>
+        <button id="missionBtn" class="btn" aria-haspopup="dialog">Mission</button>
+        <a id="socialLink" class="btn" href="social.html" style="margin-left:10px">Fire Kid Social</a>
+    </div>
+
+    <div class="flames" id="flames" aria-hidden="true"></div>
+
+    <div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="missionTitle">
+        <div class="dialog" role="document">
+            <h2 id="missionTitle">Mission Briefing</h2>
+            <p id="missionText">Your mission: Infiltrate the red fortress, recover the Ember Core, and exit undetected. Time is critical — proceed with caution.</p>
+            <button id="okBtn" class="btn ok">Okay</button>
+        </div>
+    </div>
+
+<script>
+    // Generate moving flames
+    (function(){
+        const container = document.getElementById('flames');
+        const count = 16;
+        for(let i=0;i<count;i++){
+            const f = document.createElement('div');
+            f.className = 'flame';
+            const left = Math.round(Math.random()*100);
+            const scale = (Math.random()*0.9 + 0.6).toFixed(2);
+            const delay = (Math.random()*-12).toFixed(2);
+            const dur = (6 + Math.random()*6).toFixed(2);
+            f.style.left = left + '%';
+            f.style.width = Math.round(40 * scale) + 'px';
+            f.style.height = Math.round(60 * scale) + 'px';
+            f.style.animationDuration = dur + 's, ' + (Math.random()*0.6 + 0.9).toFixed(2) + 's';
+            f.style.animationDelay = delay + 's, ' + (Math.random()*-1).toFixed(2) + 's';
+            f.style.opacity = 0;
+            const core = document.createElement('div');
+            core.className = 'core';
+            f.appendChild(core);
+            container.appendChild(f);
+        }
+    })();
+
+    // Modal logic
+    const missionBtn = document.getElementById('missionBtn');
+    const modal = document.getElementById('modal');
+    const okBtn = document.getElementById('okBtn');
+
+    missionBtn.addEventListener('click', ()=> {
+        modal.classList.remove('hidden');
+        okBtn.focus();
+    });
+
+    okBtn.addEventListener('click', ()=> {
+        modal.classList.add('hidden');
+        missionBtn.focus();
+    });
+
+    // Close modal on backdrop click or Esc
+    modal.addEventListener('click', (e)=>{
+        if(e.target === modal) modal.classList.add('hidden');
+    });
+    document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape') modal.classList.add('hidden');
+    });
+</script>
+</body>
+</html>
