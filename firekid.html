@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mission Flames</title>
+<title>Fire Kid Home</title>
 <style>
     :root{
         --bg1:#330000;
@@ -112,8 +112,9 @@
 </head>
 <body>
     <div class="controls">
-        <h1 class="site-title">Fire Kid Website</h1>
+        <h1 class="site-title">Fire Kid Missions And Media</h1>
         <button id="missionBtn" class="btn" aria-haspopup="dialog">Mission</button>
+        <button id="practiceBtn" class="btn" aria-haspopup="dialog">Daily Practice Location</button>
         <a id="socialLink" class="btn" href="social.html" style="margin-left:10px">Fire Kid Social</a>
     </div>
 
@@ -122,8 +123,14 @@
     <div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="missionTitle">
         <div class="dialog" role="document">
             <h2 id="missionTitle">Mission Briefing</h2>
-            <p id="missionText">Your mission: Infiltrate the red fortress, recover the Ember Core, and exit undetected. Time is critical — proceed with caution.</p>
+            <p id="missionText">Your mission: The Underminer escaped from jail. Work with the Incredibles to put a stop on his newest evil plan, then catch him and turn him in to the police.</p>
             <button id="okBtn" class="btn ok">Okay</button>
+        </div>
+        <div id="modal2" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="practiceTitle">
+        <div class="dialog" role="document">
+            <h2 id="practiceTitle">Practice Location</h2>
+            <p id="practiceText">The daily practice location is the Empire State building in New York City.</p>
+            <button id="okBtn2" class="btn ok">Okay</button>
         </div>
     </div>
 
@@ -173,6 +180,28 @@
     });
     document.addEventListener('keydown', (e)=>{
         if(e.key === 'Escape') modal.classList.add('hidden');
+    });
+    // Modal logic
+    const practiceBtn = document.getElementById('practiceBtn');
+    const modal2 = document.getElementById('modal2');
+    const okBtn2 = document.getElementById('okBtn2');
+
+    practiceBtn.addEventListener('click', ()=> {
+        modal2.classList.remove('hidden');
+        okBtn2.focus();
+    });
+
+    okBtn2.addEventListener('click', ()=> {
+        modal2.classList.add('hidden');
+        practiceBtn.focus();
+    });
+
+    // Close modal on backdrop click or Esc
+    modal2.addEventListener('click', (e)=>{
+        if(e.target === modal2) modal2.classList.add('hidden');
+    });
+    document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape') modal2.classList.add('hidden');
     });
 </script>
 </body>
