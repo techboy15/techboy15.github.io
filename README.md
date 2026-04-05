@@ -548,7 +548,7 @@
                         ]);
                     }{
                     return this._choose([
-                        "I don't know what that means. If you want help with something that I don't know yet, you can contact my developers at prov1624@pm.me and let them know what you'd like me to be able to do! In the meantime, maybe you can try asking me about something else or playing a game with me! 🐾"
+                        "I don't know what that means. If you're playing 20 questions, the question may not work because it isn't programmed into me yet."
                     ]);
                 }
                 // default playful transformations
