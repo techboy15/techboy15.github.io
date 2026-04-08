@@ -465,7 +465,7 @@
                     }
                     if (/(dictionary|meanings|definitions)\b/.test(low)) {
                         return this._choose([
-                            "I can be your dictionary! I don't know the meaning of every word, but I can try to help with common words. Just ask me for the definition of a word, and I'll do my best to explain it in a way that's easy to understand!",
+                            "I can be your dictionary! I don't know the meaning of every word, but I can try to help with some common words. Just ask me for the definition of a word, and I'll do my best to explain it in a way that's easy to understand!",
                             "I can help with definitions! Just ask me for the meaning of a word, and I'll do my best to explain it in a simple way. I might not know every word, but I'll try my best to help you understand!"
                         ]);
                     }
@@ -493,7 +493,7 @@
                     }
                      if (/(word fetch|how about word fetch|can we play word fetch|let's play word fetch|what about word fetch)\b/.test(low)) {
                         return this._choose([
-                            "Sure! Let's play Word Fetch! I'll give you a URL and you have to tell me the word in the website page. Here's your first one: https://wordfetch.rodthepug.com/#wordfetchp1 What word do you see on that page?"
+                            "Sure! Let's play Word Fetch! I'll give you a URL and you have to tell me the word in the website page. Here's your first one: <a href="https://wordfetch.rodthepug.com/#wordfetchp1">https://wordfetch.rodthepug.com/#wordfetchp1 What word do you see on that page?</a>"
                         ]);
                     }
                     if (/(supercalifragilisticexpialidocious|its supercalifragilisticexpialidocious|it's supercalifragilisticexpialidocious|the word is supercalifragilisticexpialidocious|it's supercalifragilisticexpialidocious, right)\b/.test(low)) {
